@@ -126,14 +126,20 @@ router.post(
       const defaultImage = req.files.defaultImage[0];
       const extraImages = req.files.extraImages || [];
 
+      // 🔥 Fix: Construct full URLs instead of relative paths
+      const baseURL = process.env.NODE_ENV === 'production' 
+        ? 'https://your-backend-url.onrender.com' 
+        : 'http://localhost:5000';
+
       const newProduct = new Product({
         name: name.trim(),
         price: parseFloat(price),
         description: description.trim(),
         category: category?.trim(),
         subCategory: subCategory?.trim(),
-        image: `/uploads/${defaultImage.filename}`,
-        extraImages: extraImages.map((file) => `/uploads/${file.filename}`),
+        // 🔥 Use full URL
+        image: `${baseURL}/uploads/${defaultImage.filename}`,
+        extraImages: extraImages.map((file) => `${baseURL}/uploads/${file.filename}`),
       });
 
       await newProduct.save();
